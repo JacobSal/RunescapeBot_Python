@@ -1,4 +1,5 @@
 import subprocess
+import time
 try:
     import pyautogui
 except ImportError:
