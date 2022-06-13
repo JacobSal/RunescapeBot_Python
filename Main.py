@@ -1,13 +1,14 @@
 import subprocess
 import time
+import os
 try:
     import pyautogui
 except ImportError:
-    subprocess.call(['pip install pyautogui']stdout=subprocess.PIPE,universal_newlines=True)
+    subprocess.call(['pip install pyautogui'], stdout=subprocess.PIPE, universal_newlines=True)
 try:
     from random import randint
 except ImportError:
-    subprocess.call(['pip install random']stdout=subprocess.PIPE,universal_newlines=True)
+    subprocess.call(['pip install random'], stdout=subprocess.PIPE, universal_newlines=True)
 #for setup you will need a folder named Pictures, inside of this you will need 4 png files named as followed
 # sandstone.png
 # sandstone1.png
@@ -27,7 +28,7 @@ def mine():
     sandstone = None 
     # declaring a variable sandstone and set the value to none than search on screen 20 itterations for the file in Pictures/sandstone.png
     for i in range(1,20):
-        sandstone = pyautogui.locateOnScreen('Pictures/sandstone.png',confidence=.95) 
+        sandstone = pyautogui.locateOnScreen('Pictures/sandstone.png',minSearchTime=2,confidence=.95) 
         # this will result in the output of bbox with grid coordinates that we can work with
     pyautogui.moveTo(sandstone, duration=1.2, tween=pyautogui.easeOutQuad)
     # okay so lets break this down pyautogui.moveTo this moves the mouse the tween allows different options this one starts the movement fast and slows down to be as humanly accurate as possible
@@ -40,41 +41,90 @@ def mine():
     pyautogui.click()
     time.sleep(randint(10,12))
     # set the sleep time so the stamina bar only gets about half way down
+    
+def moveAft():
+    global invIx, invIy
+    invIx = invIx*-1
+    invIy = invIy*-1
+    mse = pyautogui.mouseinfo
+    initPos = mse.position()
+    print(initPos)
+    print(f"({invIx}, {invIy})")
+    pyautogui.moveTo(initPos+(invIx,invIy), duration=1.2, tween=pyautogui.easeOutQuad)
+    pyautogui.rightClick()
+    for i in range(0,20):
+        pyautogui.click()
+        time.sleep(randint(1, 3))
+    pyautogui.click()
+    time.sleep(randint(20, 50))
+    return
+#enddef
 
+def moveFore():
+    global invIx, invIy
+    invIx = invIx*-1
+    invIy = invIy*-1
+    mse = pyautogui.mouseinfo
+    initPos = mse.position()
+    print(initPos)
+    print(f"({invIx}, {invIy})")
+    pyautogui.moveTo(initPos+(invIx,invIy), duration=1.2, tween=pyautogui.easeOutQuad)
+    pyautogui.rightClick()
+    for i in range(0,20):
+        pyautogui.click()
+        time.sleep(randint(1, 3))
+    pyautogui.click()
+    time.sleep(randint(20, 50))
+    return
+#enddef
 
 def grind():
-    sandstone1 = None
-    for i in range(1,10):
-        sandstone1 = pyautogui.locateOnScreen('Pictures/sandstone1.png', minSearchTime=1,confidence=.8) # the confidence argument is usefull if you bot is not clicking on anything try setting the confidence argument to say 0.65, 1 bieng a perfect match
-    pyautogui.moveTo(sandstone1, duration=1.2, tween=pyautogui.easeOutQuad)
+    global invIx, invIy
+    invIx = randint(-100,100)*-1
+    invIy = randint(-100,100)*-1
+    mse = pyautogui.mouseinfo
+    initPos = mse.position()
+    print(initPos)
+    print(f"({invIx}, {invIy})")
+    pyautogui.moveTo(initPos+(invIx,invIy), duration=1.2, tween=pyautogui.easeOutQuad)
     pyautogui.rightClick()
+    pyautogui.moveTo(initPos+(invIy,invIx), duration=1.2, tween=pyautogui.easeOutQuad)
     time.sleep(randint(1, 3))
-    for i in range (1,3):
-        grind = pyautogui.locateOnScreen('Pictures/grind.png')
-    pyautogui.moveTo(grind, duration=1.2, tween=pyautogui.easeOutQuad)
+    grind = None
+    while grind is None:
+        grind = pyautogui.locateOnScreen(os.path.abspath('./Pictures/blurrAmmonite.png'),minSearchTime=2, confidence=0.6, step = 100)
+        print(grind)
+        time.sleep(randint(1, 3))
+    #endfor
+    pyautogui.moveTo(grind, duration=1, tween=pyautogui.easeOutQuad)
     pyautogui.click()
-    time.sleep(randint(2, 3))
-    pyautogui.press('space')
-    time.sleep(38)
+    time.sleep(randint(20, 50))
+    return
+#enddef
 
 # Okay so lets explain the logic below we create a never ending loop, each loop we search the last inventory slot to see if its filled or not 20 times
 # if the last inventory slot has something in it it will execute the grind function if it does not it will execute the mine function several times until the last slot is filled usually 3-4 times
 # in the grind function the sleep is not random as Runescape gives you the time it takes to craft all 26-27 pieces into sand
-while True:
-    for i in range(1,20):
-        empytbag = pyautogui.locateOnScreen('Pictures/emptybag.png',confidence=.65,region=(1722,748, 200,450)) # the region argument states where on screen you want to look for the matching pixles. If coloration is an issue try using the grayscale=True argument
-    if empytbag is not None:
-        print("mining")
-        mine()
-        empytbag == None
-        pass
-    for i in range(1, 20):
-        empytbag = pyautogui.locateOnScreen('Pictures/emptybag.png', confidence=.65,region=(1722, 748, 200, 450))
-
-    if empytbag is None:
-        print("grinding")
+if __name__ == '__main__':
+    while True:
+        invIx = randint(-100,100)*-1
+        invIy = randint(-100,100)*-1
         grind()
-        empytbag == 1
-        pass
+    #end while
+    # for i in range(1,20):
+    #     empytbag = pyautogui.locateOnScreen('Pictures/emptybag.png',confidence=.65,region=(1722,748, 200,450)) # the region argument states where on screen you want to look for the matching pixles. If coloration is an issue try using the grayscale=True argument
+    # if empytbag is not None:
+    #     print("mining")
+    #     mine()
+    #     empytbag == None
+    #     pass
+    # for i in range(1, 20):
+    #     empytbag = pyautogui.locateOnScreen('Pictures/emptybag.png', confidence=.65,region=(1722, 748, 200, 450))
+    # emptybag = None
+    # if emptybag is None:
+    #     print("grinding")
+    #     grind()
+    #     emptybag == 1
+    #     pass
     # so the first attempt at writing this I tried a while statement for each function and it didnt work as smoothly
     # if you want to make this code look a little better you could create classes but this was intended for fast setup
