@@ -110,6 +110,7 @@ if __name__ == '__main__':
         invIx = randint(-100,100)*-1
         invIy = randint(-100,100)*-1
         grind()
+        mine()
     #end while
     # for i in range(1,20):
     #     empytbag = pyautogui.locateOnScreen('Pictures/emptybag.png',confidence=.65,region=(1722,748, 200,450)) # the region argument states where on screen you want to look for the matching pixles. If coloration is an issue try using the grayscale=True argument
